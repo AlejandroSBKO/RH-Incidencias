@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Búsqueda de Incidencias</title>
+
+    <!-- Tailwind + DaisyUI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+      .clickable-stat:hover {
+        cursor: pointer;
+        transform: translateY(-2px);
+        transition: all 0.2s ease;
+      }
+    </style>
+  </head>
+
+  <body class="bg-base-300 h-screen flex flex-col">
+    <!-- Header -->
+    <header class="navbar bg-orange-400 text-white px-6 h-16 flex-none">
+      <div class="flex-1">
+        <h1 class="text-2xl font-bold">Incidencias: Búsqueda</h1>
+      </div>
+      <div class="flex-none text-3xl font-bold">H</div>
+    </header>
+
+    <main class="flex flex-1 overflow-hidden">
+      <aside
+        class="w-64 bg-base-100 p-6 shadow-md flex flex-col h-full justify-between"
+      >
+        <h2 class="text-xl font-semibold mb-6">Menú</h2>
+        <div class="flex flex-col space-y-3 flex-grow">
+          <a href="dashboard.html"
+            class="btn bg-orange-400 hover:bg-yellow-500 text-black font-semibold w-full"
+          >
+            inicio
+        </a>
+          <button
+            class="btn bg-orange-400 hover:bg-yellow-500 text-black font-semibold w-full"
+          >
+            Crear Incidencia
+          </button>
+          <button class="btn btn-neutral w-full">Buscar Incidencia</button>
+        </div>
+        <div
+          class="mt-auto text-sm text-center text-gray-500 pt-4 border-t border-gray-300"
+        >
+          Incidencias y Despidos
+        </div>
+      </aside>
+
+      <!-- Sección principal de búsqueda -->
+      <section class="flex-1 overflow-auto p-8">
+        <!-- Búsqueda rápida -->
+        <div class="card bg-base-100 shadow-xl mb-6">
+          <div class="card-body">
+            <h2 class="card-title text-lg font-semibold">Búsqueda rápida</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+              <div class="stat bg-base-200 rounded-lg p-4 clickable-stat" onclick="filtrarPorTipo('todos')">
+                <div class="stat-title">Total de incidencias</div>
+                <div class="stat-value text-2xl" id="total-incidencias">24</div>
+              </div>
+              <div class="stat bg-base-200 rounded-lg p-4 clickable-stat" onclick="filtrarPorTipo('retardo')">
+                <div class="stat-title">Retardos</div>
+                <div class="stat-value text-2xl" id="total-retardos">12</div>
+              </div>
+              <div class="stat bg-base-200 rounded-lg p-4 clickable-stat" onclick="filtrarPorTipo('enfermedad')">
+                <div class="stat-title">Enfermedad</div>
+                <div class="stat-value text-2xl" id="total-enfermedad">8</div>
+              </div>
+              <div class="stat bg-base-200 rounded-lg p-4 clickable-stat" onclick="filtrarPorTipo('despido')">
+                <div class="stat-title">Despidos</div>
+                <div class="stat-value text-2xl" id="total-despidos">4</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filtros y tabla -->
+        <div class="card bg-base-100 shadow-xl">
+          <div class="card-body">
+            <!-- Pestañas de filtro -->
+            <div class="tabs tabs-boxed bg-base-200 w-fit mb-4" id="filtro-estado">
+              <a class="tab tab-active" onclick="filtrarPorEstado('todos')">All</a> 
+              <a class="tab" onclick="filtrarPorEstado('incompleto')">Incomplete</a> 
+              <a class="tab" onclick="filtrarPorEstado('atrasado')">Overdue</a> 
+              <a class="tab" onclick="filtrarPorEstado('en-progreso')">Ongoing</a> 
+              <a class="tab" onclick="filtrarPorEstado('finalizado')">Finished</a>
+            </div>
+
+            <!-- Tabla de incidencias -->
+            <div class="overflow-x-auto">
+              <table class="table table-zebra w-full" id="tabla-incidencias">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Acumulado</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="cuerpo-tabla">
+                  <!-- Las filas se generarán dinámicamente con JavaScript -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Botón Generar Reporte -->
+            <div class="card-actions justify-end mt-6">
+              <button class="btn btn-neutral" onclick="generarReporte()">Generar reporte</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal para detalles de incidencia -->
+    <input type="checkbox" id="modal-detalles" class="modal-toggle" />
+    <div class="modal">
+      <div class="modal-box">
+        <h3 class="font-bold text-lg" id="modal-titulo">Detalles de Incidencia</h3>
+        <div class="py-4" id="modal-contenido">
+          <!-- Contenido dinámico -->
+        </div>
+        <div class="modal-action">
+          <label for="modal-detalles" class="btn">Cerrar</label>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Datos de ejemplo para las incidencias
+      const incidencias = [
+        {
+          id: "#ORDY008",
+          nombre: "Esther Klein",
+          fecha: "17 Dec 2024",
+          tipo: "Retardo",
+          acumulado: 1,
+          estado: "incompleto",
+          descripcion: "Llegó 15 minutos tarde sin justificación",
+          evidencia: "Registro de asistencia"
+        },
+        {
+          id: "#ORDY007",
+          nombre: "Denise Kuhn",
+          fecha: "16 Dec 2024",
+          tipo: "Retardo",
+          acumulado: 2,
+          estado: "atrasado",
+          descripcion: "Segundo retardo en el mes",
+          evidencia: "Registro de asistencia"
+        },
+        {
+          id: "#ORDY006",
+          nombre: "Clint Hoppe",
+          fecha: "16 Dec 2024",
+          tipo: "Enfermedad",
+          acumulado: 1,
+          estado: "finalizado",
+          descripcion: "Ausencia por enfermedad con justificante médico",
+          evidencia: "Certificado médico"
+        },
+        {
+          id: "#ORDY005",
+          nombre: "Darin Deckow",
+          fecha: "16 Dec 2024",
+          tipo: "Despido",
+          acumulado: "-",
+          estado: "en-progreso",
+          descripcion: "Proceso de despido por bajo rendimiento",
+          evidencia: "Evaluaciones de desempeño"
+        },
+        {
+          id: "#ORDY004",
+          nombre: "Maria Rodriguez",
+          fecha: "15 Dec 2024",
+          tipo: "Retardo",
+          acumulado: 1,
+          estado: "finalizado",
+          descripcion: "Llegó 10 minutos tarde por tráfico",
+          evidencia: "Ninguna"
+        },
+        {
+          id: "#ORDY003",
+          nombre: "Carlos Lopez",
+          fecha: "14 Dec 2024",
+          tipo: "Enfermedad",
+          acumulado: 2,
+          estado: "incompleto",
+          descripcion: "Ausencia por gripe",
+          evidencia: "Certificado médico"
+        }
+      ];
+
+      // Variables para filtros
+      let filtroTipoActual = 'todos';
+      let filtroEstadoActual = 'todos';
+
+      // Inicializar la tabla al cargar la página
+      document.addEventListener('DOMContentLoaded', function() {
+        actualizarEstadisticas();
+        renderizarTabla();
+      });
+
+      // Función para actualizar las estadísticas
+      function actualizarEstadisticas() {
+        const total = incidencias.length;
+        const retardos = incidencias.filter(i => i.tipo === 'Retardo').length;
+        const enfermedad = incidencias.filter(i => i.tipo === 'Enfermedad').length;
+        const despidos = incidencias.filter(i => i.tipo === 'Despido').length;
+
+        document.getElementById('total-incidencias').textContent = total;
+        document.getElementById('total-retardos').textContent = retardos;
+        document.getElementById('total-enfermedad').textContent = enfermedad;
+        document.getElementById('total-despidos').textContent = despidos;
+      }
+
+      // Función para renderizar la tabla con filtros aplicados
+      function renderizarTabla() {
+        const cuerpoTabla = document.getElementById('cuerpo-tabla');
+        cuerpoTabla.innerHTML = '';
+
+        // Aplicar filtros
+        let incidenciasFiltradas = incidencias;
+        
+        if (filtroTipoActual !== 'todos') {
+          incidenciasFiltradas = incidenciasFiltradas.filter(i => 
+            i.tipo.toLowerCase() === filtroTipoActual
+          );
+        }
+        
+        if (filtroEstadoActual !== 'todos') {
+          incidenciasFiltradas = incidenciasFiltradas.filter(i => 
+            i.estado === filtroEstadoActual
+          );
+        }
+
+        // Generar filas de la tabla
+        incidenciasFiltradas.forEach(incidencia => {
+          const fila = document.createElement('tr');
+          
+          // Determinar clase del badge según el tipo
+          let badgeClass = 'badge ';
+          switch(incidencia.tipo) {
+            case 'Retardo':
+              badgeClass += 'badge-warning';
+              break;
+            case 'Enfermedad':
+              badgeClass += 'badge-info';
+              break;
+            case 'Despido':
+              badgeClass += 'badge-error';
+              break;
+            default:
+              badgeClass += 'badge-neutral';
+          }
+
+          fila.innerHTML = `
+            <td class="font-semibold">${incidencia.id}</td>
+            <td>${incidencia.nombre}</td>
+            <td>${incidencia.fecha}</td>
+            <td>
+              <span class="${badgeClass}">${incidencia.tipo}</span>
+            </td>
+            <td>${incidencia.acumulado}</td>
+            <td>
+              <div class="flex space-x-2">
+                <button class="btn btn-sm btn-circle btn-success" onclick="marcarCompletado('${incidencia.id}')">
+                  ✓
+                </button>
+                <button class="btn btn-sm btn-circle btn-warning" onclick="ponerEnEspera('${incidencia.id}')">
+                  💤
+                </button>
+                <div class="dropdown dropdown-end">
+                  <div tabindex="0" role="button" class="btn btn-sm btn-circle">
+                    ...
+                  </div>
+                  <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                    <li><a onclick="verDetalles('${incidencia.id}')">Ver detalles</a></li>
+                    <li><a onclick="editarIncidencia('${incidencia.id}')">Editar</a></li>
+                    <li><a onclick="eliminarIncidencia('${incidencia.id}')">Eliminar</a></li>
+                  </ul>
+                </div>
+              </div>
+            </td>
+          `;
+          
+          cuerpoTabla.appendChild(fila);
+        });
+
+        // Si no hay resultados, mostrar mensaje
+        if (incidenciasFiltradas.length === 0) {
+          const filaVacia = document.createElement('tr');
+          filaVacia.innerHTML = `
+            <td colspan="6" class="text-center py-4 text-gray-500">
+              No se encontraron incidencias con los filtros aplicados
+            </td>
+          `;
+          cuerpoTabla.appendChild(filaVacia);
+        }
+      }
+
+      // Funciones de filtrado
+      function filtrarPorTipo(tipo) {
+        filtroTipoActual = tipo;
+        renderizarTabla();
+        
+        // Actualizar pestañas de estado
+        document.querySelectorAll('#filtro-estado .tab').forEach(tab => {
+          tab.classList.remove('tab-active');
+        });
+        document.querySelector('#filtro-estado .tab').classList.add('tab-active');
+        filtroEstadoActual = 'todos';
+      }
+
+      function filtrarPorEstado(estado) {
+        filtroEstadoActual = estado;
+        renderizarTabla();
+        
+        // Actualizar pestañas activas
+        document.querySelectorAll('#filtro-estado .tab').forEach(tab => {
+          tab.classList.remove('tab-active');
+        });
+        event.target.classList.add('tab-active');
+      }
+
+      // Funciones de acción para los botones
+      function marcarCompletado(id) {
+        const incidencia = incidencias.find(i => i.id === id);
+        if (incidencia) {
+          incidencia.estado = 'finalizado';
+          alert(`Incidencia ${id} marcada como completada`);
+          renderizarTabla();
+        }
+      }
+
+      function ponerEnEspera(id) {
+        const incidencia = incidencias.find(i => i.id === id);
+        if (incidencia) {
+          incidencia.estado = 'en-progreso';
+          alert(`Incidencia ${id} puesta en espera`);
+          renderizarTabla();
+        }
+      }
+
+      function verDetalles(id) {
+        const incidencia = incidencias.find(i => i.id === id);
+        if (incidencia) {
+          document.getElementById('modal-titulo').textContent = `Detalles: ${id}`;
+          document.getElementById('modal-contenido').innerHTML = `
+            <p><strong>Nombre:</strong> ${incidencia.nombre}</p>
+            <p><strong>Fecha:</strong> ${incidencia.fecha}</p>
+            <p><strong>Tipo:</strong> ${incidencia.tipo}</p>
+            <p><strong>Acumulado:</strong> ${incidencia.acumulado}</p>
+            <p><strong>Estado:</strong> ${incidencia.estado}</p>
+            <p><strong>Descripción:</strong> ${incidencia.descripcion}</p>
+            <p><strong>Evidencia:</strong> ${incidencia.evidencia}</p>
+          `;
+          document.getElementById('modal-detalles').checked = true;
+        }
+      }
+
+      function editarIncidencia(id) {
+        alert(`Editando incidencia: ${id}`);
+        // Aquí iría la lógica para abrir un formulario de edición
+      }
+
+      function eliminarIncidencia(id) {
+        if (confirm(`¿Está seguro de que desea eliminar la incidencia ${id}?`)) {
+          const index = incidencias.findIndex(i => i.id === id);
+          if (index !== -1) {
+            incidencias.splice(index, 1);
+            actualizarEstadisticas();
+            renderizarTabla();
+            alert(`Incidencia ${id} eliminada correctamente`);
+          }
+        }
+      }
+
+      function generarReporte() {
+        // Simular generación de reporte
+        alert('Generando reporte de incidencias...');
+        
+        // En una implementación real, aquí se generaría un PDF o Excel
+        const incidenciasFiltradas = incidencias.filter(i => {
+          if (filtroTipoActual !== 'todos' && i.tipo.toLowerCase() !== filtroTipoActual) return false;
+          if (filtroEstadoActual !== 'todos' && i.estado !== filtroEstadoActual) return false;
+          return true;
+        });
+        
+        console.log('Reporte generado con', incidenciasFiltradas.length, 'incidencias');
+      }
+    </script>
+  </body>
+</html>
