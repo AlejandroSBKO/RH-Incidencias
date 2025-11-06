@@ -35,11 +35,12 @@
       >
         <h2 class="text-xl font-semibold mb-6">Menú</h2>
         <div class="flex flex-col space-y-3 flex-grow">
-          <button
+          <a href="dashboard.html"
             class="btn bg-orange-400 hover:bg-yellow-500 text-black font-semibold w-full"
           >
-            Iniciar Despido
-          </button>
+            Inicio
+        </a>
+
           <button
             class="btn btn-neutral w-full"
           >
@@ -59,7 +60,7 @@
         class="flex-1 overflow-auto p-8 flex flex-col items-start justify-start"
       >
         <div
-          class="card w-full max-w-3xl bg-base-100 shadow-xl p-8 rounded-box"
+          class="card w-full bg-base-100 shadow-xl p-8 rounded-box"
         >
           <!-- Botón para regresar -->
           <div class="mb-4">
@@ -235,10 +236,6 @@
 
             if (!idEmpleado) {
               alert('Por favor, ingrese el ID de empleado.');
-              return;
-            }
-            if (!datosEmpleado) {
-              alert('Por favor, complete los datos del empleado.');
               return;
             }
             if (tipoIncidencia === 'Seleccione un tipo') {
