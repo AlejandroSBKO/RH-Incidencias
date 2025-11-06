@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard de Incidencias</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script type="module" src="https://unpkg.com/cally"></script>
+
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+    </style>
+  </head>
+
+ <body class="bg-base-300 h-screen flex flex-col">
+  <!-- Header -->
+  <header class="navbar bg-orange-400 text-white px-6 h-16 flex-none">
+    <div class="flex-1">
+      <h1 class="text-2xl font-bold">Incidencias</h1>
+    </div>
+    <div class="flex-none">
+      <div class="text-3xl font-bold">H</div>
+    </div>
+  </header>
+
+  <!-- sidebar + main -->
+  <main class="flex flex-1 overflow-hidden">
+    <!-- Sidebar -->
+    
+    <aside class="w-64 bg-base-100 p-6 shadow-md flex flex-col h-full justify-between">
+      <h2 class="text-xl font-semibold mb-6">Menu</h2>
+      <div class="flex flex-col space-y-3 flex-grow">
+        <button class="btn bg-orange-400 hover:bg-yellow-500 text-black font-semibold w-full">Iniciar Despido</button>
+        <button class="btn bg-orange-400 hover:bg-yellow-500 text-black font-semibold w-full">Crear Incidencia</button>
+        <button class="btn btn-neutral w-full">Buscar Incidencia</button>
+      </div>
+      <div class="mt-auto text-sm text-center text-gray-500 pt-4 border-t">
+        Incidencias y Despidos
+      </div>
+    </aside>
+
+
+      <!-- Sección principal -->
+      <section class="flex-1 overflow-auto p-6 grid grid-cols-3 gap-6 auto-rows-fr">
+        <!-- Calendario -->
+         
+        <div class="card bg-base-100 shadow-md col-span-1 flex flex-col h-full">
+  <calendar-date class="cally bg-base-100 border border-base-300 shadow-lg rounded-box flex-1 w-full">
+    <svg aria-label="Previous" class="fill-current w-4 h-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path>
+    </svg>
+    <svg aria-label="Next" class="fill-current w-4 h-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+    </svg>
+    <calendar-month class="w-full h-full"></calendar-month>
+  </calendar-date>
+</div>
+
+          </div>
+        </div>
+
+        <!-- badges  -->
+        <div class="card bg-base-100 shadow-md col-span-1 flex flex-col">
+          <div class="card-body flex flex-col flex-1">
+            <h2 class="card-title">Incidencias Comunes</h2>
+            <div class="flex flex-col gap-3 mt-2 flex-1">
+              <div class="badge badge-neutral justify-between p-4">
+                Enfermedad Justificada <span class="ml-2 badge badge-outline">4</span>
+              </div>
+              <div class="badge badge-neutral justify-between p-4">
+                Retardo <span class="ml-2 badge badge-outline">3</span>
+              </div>
+              <div class="badge badge-neutral justify-between p-4">
+                Accidente Laboral <span class="ml-2 badge badge-outline">1</span>
+              </div>
+              <div class="badge badge-neutral justify-between p-4">
+                Despido <span class="ml-2 badge badge-outline">1</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- totales -->
+        <div class="card bg-base-100 shadow-md flex flex-col items-center justify-center">
+          <div class="text-center">
+            <h2 class="text-lg font-bold">Incidencias este mes</h2>
+            <div class="text-6xl font-extrabold mt-2 text-gray-600">9</div>
+          </div>
+        </div>
+
+        <!-- aqui las graficas -->
+        <div class="card bg-base-100 shadow-md col-span-2 flex flex-col">
+          <div class="card-body flex flex-col flex-1">
+            <h2 class="card-title">Incidencias por área</h2>
+            <div class="flex-1 flex items-center justify-center text-gray-400">
+              <div class="relative flex flex-col rounded-xl bg-white bg-clip-border text-gray-700 shadow-md w-full">
+  <div class="relative mx-4 mt-4 flex flex-col gap-4 overflow-hidden rounded-none bg-transparent bg-clip-border text-gray-700 shadow-none md:flex-row md:items-center">
+
+  </div>
+  <div class="flex-1 full">
+    <div id="bar-chart" class="flex-1"></div>
+  </div>
+</div>
+ 
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+const chartConfig = {
+  series: [
+    {
+      name: "Sales",
+      data: [1, 0, 3, 3,2,0],
+    },
+  ],
+  chart: {
+    type: "bar",
+    height: 240,
+    toolbar: {
+      show: false,
+    },
+  },
+  title: {
+    show: "",
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  colors: ["#020617"],
+  plotOptions: {
+    bar: {
+      columnWidth: "40%",
+      borderRadius: 2,
+    },
+  },
+  xaxis: {
+    axisTicks: {
+      show: false,
+    },
+    axisBorder: {
+      show: false,
+    },
+    labels: {
+      style: {
+        colors: "#616161",
+        fontSize: "12px",
+        fontFamily: "inherit",
+        fontWeight: 400,
+      },
+    },
+    categories: [
+      "Area 1",
+      "Area 2",
+      "Area 3",
+      "Area 4",
+      "Area 5",
+      "Area 6",
+    ],
+  },
+  yaxis: {
+    labels: {
+      style: {
+        colors: "#616161",
+        fontSize: "12px",
+        fontFamily: "inherit",
+        fontWeight: 400,
+      },
+    },
+  },
+  grid: {
+    show: true,
+    borderColor: "#dddddd",
+    strokeDashArray: 5,
+    xaxis: {
+      lines: {
+        show: true,
+      },
+    },
+    padding: {
+      top: 5,
+      right: 20,
+    },
+  },
+  fill: {
+    opacity: 0.8,
+  },
+  tooltip: {
+    theme: "dark",
+  },
+};
+ 
+const chart = new ApexCharts(document.querySelector("#bar-chart"), chartConfig);
+ 
+chart.render();
+</script>
+            </div>
+          </div>
+        </div>
+
+        <div class="card bg-base-100 shadow-md flex flex-col">
+          <div class="card-body flex flex-col flex-1">
+            <h2 class="card-title">Análisis General</h2>
+            <div class="flex-1 flex items-center justify-center text-gray-400">
+              <div class="relative flex flex-col rounded-xl bg-white bg-clip-border text-gray-700 shadow-md w-full">
+  <div class="relative mx-4 mt-4 flex flex-col gap-4 overflow-hidden rounded-none bg-transparent bg-clip-border text-gray-700 shadow-none md:flex-row md:items-center">
+  </div>
+  <div class="flex-1 full">
+    <div id="pie-chart" class="flex-1"></div>
+  </div>
+</div>
+ 
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+const chart2Config = {
+  series: [44, 55, 13, 43, 22],
+  chart: {
+    type: "pie",
+    width: 280,
+    height: 250,
+    toolbar: {
+      show: false,
+    },
+  },
+  title: {
+    show: "",
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  colors: ["#020617", "#ff8f00", "#00897b", "#1e88e5", "#d81b60"],
+  legend: {
+    show: false,
+  },
+};
+ 
+const chart2 = new ApexCharts(document.querySelector("#pie-chart"), chart2Config);
+ 
+chart2.render();
+</script>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
