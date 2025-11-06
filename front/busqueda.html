@@ -22,6 +22,24 @@
         transform: translateY(-2px);
         transition: all 0.2s ease;
       }
+      .stat-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        background-color: #f3f4f6;
+      }
+      .stat-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+      .stat-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
     </style>
   </head>
 
@@ -40,14 +58,10 @@
       >
         <h2 class="text-xl font-semibold mb-6">Menú</h2>
         <div class="flex flex-col space-y-3 flex-grow">
-          <a href="dashboard.html"
-            class="btn bg-orange-400 hover:bg-yellow-500 text-black font-semibold w-full"
-          >
-            inicio
-        </a>
-          <button
-            class="btn bg-orange-400 hover:bg-yellow-500 text-black font-semibold w-full"
-          >
+          <button class="btn bg-orange-400 hover:bg-yellow-500 text-black font-semibold w-full">
+            Iniciar Despido
+          </button>
+          <button class="btn bg-orange-400 hover:bg-yellow-500 text-black font-semibold w-full">
             Crear Incidencia
           </button>
           <button class="btn btn-neutral w-full">Buscar Incidencia</button>
@@ -61,26 +75,26 @@
 
       <!-- Sección principal de búsqueda -->
       <section class="flex-1 overflow-auto p-8">
-        <!-- Búsqueda rápida -->
+        <!-- Estadísticas -->
         <div class="card bg-base-100 shadow-xl mb-6">
           <div class="card-body">
-            <h2 class="card-title text-lg font-semibold">Búsqueda rápida</h2>
+            <h2 class="card-title text-lg font-semibold">Total de Incidencias</h2>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
-              <div class="stat bg-base-200 rounded-lg p-4 clickable-stat" onclick="filtrarPorTipo('todos')">
+              <div class="stat-container clickable-stat" onclick="filtrarPorTipo('todos')">
                 <div class="stat-title">Total de incidencias</div>
-                <div class="stat-value text-2xl" id="total-incidencias">24</div>
+                <div class="stat-value" id="total-incidencias">8</div>
               </div>
-              <div class="stat bg-base-200 rounded-lg p-4 clickable-stat" onclick="filtrarPorTipo('retardo')">
+              <div class="stat-container clickable-stat" onclick="filtrarPorTipo('retardo')">
                 <div class="stat-title">Retardos</div>
-                <div class="stat-value text-2xl" id="total-retardos">12</div>
+                <div class="stat-value" id="total-retardos">4</div>
               </div>
-              <div class="stat bg-base-200 rounded-lg p-4 clickable-stat" onclick="filtrarPorTipo('enfermedad')">
+              <div class="stat-container clickable-stat" onclick="filtrarPorTipo('enfermedad')">
                 <div class="stat-title">Enfermedad</div>
-                <div class="stat-value text-2xl" id="total-enfermedad">8</div>
+                <div class="stat-value" id="total-enfermedad">2</div>
               </div>
-              <div class="stat bg-base-200 rounded-lg p-4 clickable-stat" onclick="filtrarPorTipo('despido')">
+              <div class="stat-container clickable-stat" onclick="filtrarPorTipo('despido')">
                 <div class="stat-title">Despidos</div>
-                <div class="stat-value text-2xl" id="total-despidos">4</div>
+                <div class="stat-value" id="total-despidos">2</div>
               </div>
             </div>
           </div>
@@ -117,32 +131,279 @@
               </table>
             </div>
 
-            <!-- Botón Generar Reporte -->
-            <div class="card-actions justify-end mt-6">
-              <button class="btn btn-neutral" onclick="generarReporte()">Generar reporte</button>
+            <!-- Botones de Reporte -->
+            <div class="card-actions justify-end mt-6 space-x-4">
+              <button class="btn btn-neutral" onclick="mostrarModalReporteDespidos()">Reporte Despidos</button>
+              <button class="btn btn-neutral" onclick="mostrarModalReporteGeneral()">Generar Reporte</button>
             </div>
           </div>
         </div>
       </section>
     </main>
 
-    <!-- Modal para detalles de incidencia -->
+    <!-- Modal para detalles de incidencia - MEJORADO -->
     <input type="checkbox" id="modal-detalles" class="modal-toggle" />
     <div class="modal">
-      <div class="modal-box">
-        <h3 class="font-bold text-lg" id="modal-titulo">Detalles de Incidencia</h3>
+      <div class="modal-box max-w-2xl">
+        <h3 class="font-bold text-lg mb-4" id="modal-titulo">Detalles: #ORDY008</h3>
         <div class="py-4" id="modal-contenido">
           <!-- Contenido dinámico -->
         </div>
+        
         <div class="modal-action">
           <label for="modal-detalles" class="btn">Cerrar</label>
         </div>
       </div>
     </div>
 
+    <!-- Modal para editar incidencia - NUEVO -->
+    <input type="checkbox" id="modal-editar" class="modal-toggle" />
+    <div class="modal">
+      <div class="modal-box max-w-3xl">
+        <h3 class="font-bold text-lg mb-4">Editor Incidencia</h3>
+        <div class="py-4">
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="label">
+                <span class="label-text font-semibold">Tipo de Incidencia</span>
+              </label>
+              <select class="select select-bordered w-full">
+                <option>Retardo</option>
+                <option>Enfermedad</option>
+                <option>Despido</option>
+              </select>
+            </div>
+            <div>
+              <label class="label">
+                <span class="label-text font-semibold">Estado</span>
+              </label>
+              <select class="select select-bordered w-full">
+                <option>Incomplete</option>
+                <option>Overdue</option>
+                <option>Ongoing</option>
+                <option>Finished</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="mb-4">
+            <label class="label">
+              <span class="label-text font-semibold">Acumulado</span>
+            </label>
+            <input type="number" class="input input-bordered w-full" value="1">
+          </div>
+          
+          <div class="mb-4">
+            <label class="label">
+              <span class="label-text font-semibold">Descripción</span>
+            </label>
+            <textarea class="textarea textarea-bordered w-full h-32" placeholder="Ingrese la descripción de la incidencia">Llegó 15 minutos tarde sin justificación</textarea>
+          </div>
+        </div>
+        
+        <div class="modal-action">
+          <label for="modal-editar" class="btn">Cancelar</label>
+          <button class="btn btn-primary" onclick="guardarCambios()">Guardar Cambios</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para confirmar eliminación - MEJORADO -->
+    <input type="checkbox" id="modal-eliminar" class="modal-toggle" />
+    <div class="modal">
+      <div class="modal-box">
+        <h3 class="font-bold text-lg">Confirmar Eliminación</h3>
+        <div class="py-4">
+          <p id="texto-eliminar">¿Está seguro de eliminar la incidencia?</p>
+        </div>
+        <div class="modal-action">
+          <label for="modal-eliminar" class="btn">Cancelar</label>
+          <button class="btn btn-error" id="btn-confirmar-eliminar">Eliminar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para confirmar generación de reporte general - MEJORADO -->
+    <input type="checkbox" id="modal-reporte-general" class="modal-toggle" />
+    <div class="modal">
+      <div class="modal-box max-w-3xl">
+        <h3 class="font-bold text-lg">Confirmar Generación de Reporte</h3>
+        <div class="py-4">
+          <p>¿Está seguro de que desea generar el reporte general de incidencias?</p>
+          <p class="mt-2">Se generará un archivo PDF con todas las incidencias registradas en el sistema.</p>
+          
+          <div class="overflow-x-auto mt-4">
+            <table class="table table-zebra w-full">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Fecha</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="font-semibold">#ORDY011</td>
+                  <td>Carlos Mendoza</td>
+                  <td>20 Dec 2024</td>
+                </tr>
+                <tr>
+                  <td class="font-semibold">#ORDY010</td>
+                  <td>Ana López</td>
+                  <td>19 Dec 2024</td>
+                </tr>
+                <tr>
+                  <td class="font-semibold">#ORDY009</td>
+                  <td>Roberto Silva</td>
+                  <td>18 Dec 2024</td>
+                </tr>
+                <tr>
+                  <td class="font-semibold">#ORDY008</td>
+                  <td>Esther Klein</td>
+                  <td>17 Dec 2024</td>
+                </tr>
+                <tr>
+                  <td class="font-semibold">#ORDY007</td>
+                  <td>Denise Kuhn</td>
+                  <td>10 Dec 2024</td>
+                </tr>
+                <tr>
+                  <td class="font-semibold">#ORDY006</td>
+                  <td>Clint Hoppe</td>
+                  <td>16 Dec 2024</td>
+                </tr>
+                <tr>
+                  <td class="font-semibold">#ORDY005</td>
+                  <td>Darin Deckow</td>
+                  <td>16 Dec 2024</td>
+                </tr>
+                <tr>
+                  <td class="font-semibold">#ORDY004</td>
+                  <td>María González</td>
+                  <td>15 Dec 2024</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="mt-4">
+            <h4 class="font-semibold">Acumulado</h4>
+            <div class="flex space-x-4 mt-2">
+              <div class="stat bg-base-200 rounded-lg p-4">
+                <div class="stat-value text-lg">1</div>
+              </div>
+              <div class="stat bg-base-200 rounded-lg p-4">
+                <div class="stat-value text-lg">2</div>
+              </div>
+              <div class="stat bg-base-200 rounded-lg p-4">
+                <div class="stat-value text-lg">1</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-action">
+          <label for="modal-reporte-general" class="btn">Cancelar</label>
+          <button class="btn btn-neutral" onclick="generarReporteGeneral()">Generar Reporte</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para confirmar generación de reporte de despidos - MEJORADO -->
+    <input type="checkbox" id="modal-reporte-despidos" class="modal-toggle" />
+    <div class="modal">
+      <div class="modal-box max-w-3xl">
+        <h3 class="font-bold text-lg">Confirmar Generación de Reporte</h3>
+        <div class="py-4">
+          <p>¿Está seguro de que desea generar el reporte de despidos?</p>
+          <p class="mt-2">Se generará un archivo PDF con todos los despidos registrados en el sistema.</p>
+          
+          <div class="overflow-x-auto mt-4">
+            <table class="table table-zebra w-full">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Fecha</th>
+                  <th>Tipo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Clint Hoppe</td>
+                  <td>16 Dec 2024</td>
+                  <td>Enfermedad</td>
+                </tr>
+                <tr>
+                  <td>Darin Deckow</td>
+                  <td>16 Dec 2024</td>
+                  <td>Despido</td>
+                </tr>
+                <tr>
+                  <td>María González</td>
+                  <td>15 Dec 2024</td>
+                  <td>Despido</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="mt-4">
+            <h4 class="font-semibold">Acumulado</h4>
+            <div class="flex space-x-4 mt-2">
+              <div class="stat bg-base-200 rounded-lg p-4">
+                <div class="stat-value text-lg">1</div>
+              </div>
+              <div class="stat bg-base-200 rounded-lg p-4">
+                <div class="stat-value text-lg">2</div>
+              </div>
+              <div class="stat bg-base-200 rounded-lg p-4">
+                <div class="stat-value text-lg">1</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-action">
+          <label for="modal-reporte-despidos" class="btn">Cancelar</label>
+          <button class="btn btn-neutral" onclick="generarReporteDespidos()">Generar Reporte</button>
+        </div>
+      </div>
+    </div>
+
     <script>
-      // Datos de ejemplo para las incidencias
+      // Datos actualizados con más registros
       const incidencias = [
+        {
+          id: "#ORDY011",
+          nombre: "Carlos Mendoza",
+          fecha: "20 Dec 2024",
+          tipo: "Retardo",
+          acumulado: 1,
+          estado: "incompleto",
+          area: "Logística",
+          descripcion: "Llegó 20 minutos tarde por tráfico",
+          antecedentes: "Primer retardo"
+        },
+        {
+          id: "#ORDY010",
+          nombre: "Ana López",
+          fecha: "19 Dec 2024",
+          tipo: "Enfermedad",
+          acumulado: 1,
+          estado: "finalizado",
+          area: "Recursos Humanos",
+          descripcion: "Ausencia por gripe",
+          antecedentes: "Sin antecedentes previos"
+        },
+        {
+          id: "#ORDY009",
+          nombre: "Roberto Silva",
+          fecha: "18 Dec 2024",
+          tipo: "Retardo",
+          acumulado: 3,
+          estado: "atrasado",
+          area: "Ventas",
+          descripcion: "Llegó 30 minutos tarde sin aviso",
+          antecedentes: "2 retardos previos en el mes"
+        },
         {
           id: "#ORDY008",
           nombre: "Esther Klein",
@@ -150,18 +411,20 @@
           tipo: "Retardo",
           acumulado: 1,
           estado: "incompleto",
+          area: "Ventas",
           descripcion: "Llegó 15 minutos tarde sin justificación",
-          evidencia: "Registro de asistencia"
+          antecedentes: "2 retardos previos en el mes"
         },
         {
           id: "#ORDY007",
           nombre: "Denise Kuhn",
-          fecha: "16 Dec 2024",
+          fecha: "10 Dec 2024",
           tipo: "Retardo",
           acumulado: 2,
-          estado: "atrasado",
-          descripcion: "Segundo retardo en el mes",
-          evidencia: "Registro de asistencia"
+          estado: "finalizado",
+          area: "Administración",
+          descripcion: "Retardo sin justificación",
+          antecedentes: "Sin antecedentes previos"
         },
         {
           id: "#ORDY006",
@@ -170,8 +433,9 @@
           tipo: "Enfermedad",
           acumulado: 1,
           estado: "finalizado",
-          descripcion: "Ausencia por enfermedad con justificante médico",
-          evidencia: "Certificado médico"
+          area: "Operaciones",
+          descripcion: "Ausencia por enfermedad",
+          antecedentes: "Sin antecedentes previos"
         },
         {
           id: "#ORDY005",
@@ -180,39 +444,36 @@
           tipo: "Despido",
           acumulado: "-",
           estado: "en-progreso",
-          descripcion: "Proceso de despido por bajo rendimiento",
-          evidencia: "Evaluaciones de desempeño"
+          area: "Ventas",
+          descripcion: "Despido por bajo rendimiento",
+          antecedentes: "Varias advertencias previas"
         },
         {
           id: "#ORDY004",
-          nombre: "Maria Rodriguez",
+          nombre: "María González",
           fecha: "15 Dec 2024",
-          tipo: "Retardo",
-          acumulado: 1,
+          tipo: "Despido",
+          acumulado: "-",
           estado: "finalizado",
-          descripcion: "Llegó 10 minutos tarde por tráfico",
-          evidencia: "Ninguna"
-        },
-        {
-          id: "#ORDY003",
-          nombre: "Carlos Lopez",
-          fecha: "14 Dec 2024",
-          tipo: "Enfermedad",
-          acumulado: 2,
-          estado: "incompleto",
-          descripcion: "Ausencia por gripe",
-          evidencia: "Certificado médico"
+          area: "Contabilidad",
+          descripcion: "Despido por faltas repetidas",
+          antecedentes: "5 faltas en el último mes"
         }
       ];
 
       // Variables para filtros
       let filtroTipoActual = 'todos';
       let filtroEstadoActual = 'todos';
+      let incidenciaAEliminar = null;
+      let incidenciaAEditar = null;
 
       // Inicializar la tabla al cargar la página
       document.addEventListener('DOMContentLoaded', function() {
         actualizarEstadisticas();
         renderizarTabla();
+        
+        // Configurar eventos para modales
+        document.getElementById('btn-confirmar-eliminar').addEventListener('click', confirmarEliminar);
       });
 
       // Función para actualizar las estadísticas
@@ -291,7 +552,7 @@
                   <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
                     <li><a onclick="verDetalles('${incidencia.id}')">Ver detalles</a></li>
                     <li><a onclick="editarIncidencia('${incidencia.id}')">Editar</a></li>
-                    <li><a onclick="eliminarIncidencia('${incidencia.id}')">Eliminar</a></li>
+                    <li><a onclick="mostrarModalEliminar('${incidencia.id}')">Eliminar</a></li>
                   </ul>
                 </div>
               </div>
@@ -361,47 +622,102 @@
         if (incidencia) {
           document.getElementById('modal-titulo').textContent = `Detalles: ${id}`;
           document.getElementById('modal-contenido').innerHTML = `
-            <p><strong>Nombre:</strong> ${incidencia.nombre}</p>
-            <p><strong>Fecha:</strong> ${incidencia.fecha}</p>
-            <p><strong>Tipo:</strong> ${incidencia.tipo}</p>
-            <p><strong>Acumulado:</strong> ${incidencia.acumulado}</p>
-            <p><strong>Estado:</strong> ${incidencia.estado}</p>
-            <p><strong>Descripción:</strong> ${incidencia.descripcion}</p>
-            <p><strong>Evidencia:</strong> ${incidencia.evidencia}</p>
+            <div class="space-y-4">
+              <div><strong>Nombre:</strong> ${incidencia.nombre}</div>
+              <div><strong>Fecha:</strong> ${incidencia.fecha}</div>
+              <div><strong>Tipo:</strong> ${incidencia.tipo}</div>
+              <div><strong>Estado:</strong> ${incidencia.estado}</div>
+              <div><strong>Acumulado:</strong> ${incidencia.acumulado}</div>
+              <div><strong>Área:</strong> ${incidencia.area}</div>
+              <div><strong>Descripción:</strong> ${incidencia.descripcion}</div>
+              <div><strong>Antecedentes:</strong> ${incidencia.antecedentes}</div>
+            </div>
+            <div class="divider"></div>
+            <div class="flex justify-between">
+              <div>
+                <h4 class="font-bold mb-2">Despidos</h4>
+                <div>1</div>
+              </div>
+              <div>
+                <h4 class="font-bold mb-2">Acumulado</h4>
+                <div class="flex space-x-4">
+                  <span>1</span>
+                  <span>2</span>
+                  <span>1</span>
+                </div>
+              </div>
+              <div>
+                <h4 class="font-bold mb-2">Acción</h4>
+                <div class="flex space-x-2">
+                  <button class="btn btn-xs btn-outline">Ver detalles</button>
+                  <button class="btn btn-xs btn-outline">Editar</button>
+                  <button class="btn btn-xs btn-outline btn-error">Eliminar</button>
+                </div>
+              </div>
+            </div>
           `;
           document.getElementById('modal-detalles').checked = true;
         }
       }
 
       function editarIncidencia(id) {
-        alert(`Editando incidencia: ${id}`);
-        // Aquí iría la lógica para abrir un formulario de edición
+        const incidencia = incidencias.find(i => i.id === id);
+        if (incidencia) {
+          incidenciaAEditar = id;
+          document.getElementById('modal-editar').checked = true;
+        }
       }
 
-      function eliminarIncidencia(id) {
-        if (confirm(`¿Está seguro de que desea eliminar la incidencia ${id}?`)) {
-          const index = incidencias.findIndex(i => i.id === id);
+      function guardarCambios() {
+        if (incidenciaAEditar) {
+          alert(`Cambios guardados para la incidencia ${incidenciaAEditar}`);
+          document.getElementById('modal-editar').checked = false;
+          incidenciaAEditar = null;
+        }
+      }
+
+      function mostrarModalEliminar(id) {
+        const incidencia = incidencias.find(i => i.id === id);
+        if (incidencia) {
+          incidenciaAEliminar = id;
+          document.getElementById('texto-eliminar').textContent = 
+            `¿Está seguro de eliminar la incidencia ${id} de ${incidencia.nombre}?`;
+          document.getElementById('modal-eliminar').checked = true;
+        }
+      }
+
+      function confirmarEliminar() {
+        if (incidenciaAEliminar) {
+          const index = incidencias.findIndex(i => i.id === incidenciaAEliminar);
           if (index !== -1) {
             incidencias.splice(index, 1);
             actualizarEstadisticas();
             renderizarTabla();
-            alert(`Incidencia ${id} eliminada correctamente`);
+            alert(`Incidencia ${incidenciaAEliminar} eliminada correctamente`);
+            document.getElementById('modal-eliminar').checked = false;
+            incidenciaAEliminar = null;
           }
         }
       }
 
-      function generarReporte() {
-        // Simular generación de reporte
-        alert('Generando reporte de incidencias...');
-        
-        // En una implementación real, aquí se generaría un PDF o Excel
-        const incidenciasFiltradas = incidencias.filter(i => {
-          if (filtroTipoActual !== 'todos' && i.tipo.toLowerCase() !== filtroTipoActual) return false;
-          if (filtroEstadoActual !== 'todos' && i.estado !== filtroEstadoActual) return false;
-          return true;
-        });
-        
-        console.log('Reporte generado con', incidenciasFiltradas.length, 'incidencias');
+      // Funciones para mostrar modales de reporte
+      function mostrarModalReporteDespidos() {
+        document.getElementById('modal-reporte-despidos').checked = true;
+      }
+
+      function mostrarModalReporteGeneral() {
+        document.getElementById('modal-reporte-general').checked = true;
+      }
+
+      // Funciones para generar reportes
+      function generarReporteDespidos() {
+        alert('Generando reporte de despidos en PDF...');
+        document.getElementById('modal-reporte-despidos').checked = false;
+      }
+
+      function generarReporteGeneral() {
+        alert('Generando reporte general de incidencias en PDF...');
+        document.getElementById('modal-reporte-general').checked = false;
       }
     </script>
   </body>
