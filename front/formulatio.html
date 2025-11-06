@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro de Incidencias</title>
+
+    <!-- Tailwind + DaisyUI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+    </style>
+  </head>
+
+  <body class="bg-base-300 h-screen flex flex-col">
+    <!-- Header -->
+    <header class="navbar bg-orange-400 text-white px-6 h-16 flex-none">
+      <div class="flex-1">
+        <h1 class="text-2xl font-bold">Incidencias: Registro</h1>
+      </div>
+      <div class="flex-none text-3xl font-bold">H</div>
+    </header>
+
+    <main class="flex flex-1 overflow-hidden">
+      <aside
+        class="w-64 bg-base-100 p-6 shadow-md flex flex-col h-full justify-between"
+      >
+        <h2 class="text-xl font-semibold mb-6">Menú</h2>
+        <div class="flex flex-col space-y-3 flex-grow">
+          <button
+            class="btn bg-orange-400 hover:bg-yellow-500 text-black font-semibold w-full"
+          >
+            Iniciar Despido
+          </button>
+          <button
+            class="btn bg-orange-400 hover:bg-yellow-500 text-black font-semibold w-full"
+          >
+            Crear Incidencia
+          </button>
+          <button class="btn btn-neutral w-full">Buscar Incidencia</button>
+        </div>
+        <div
+          class="mt-auto text-sm text-center text-gray-500 pt-4 border-t border-gray-300"
+        >
+          Incidencias y Despidos
+        </div>
+      </aside>
+
+      <!-- Sección del formulario -->
+      <section
+        class="flex-1 overflow-auto p-8 flex flex-col items-start justify-start"
+      >
+        <div
+          class="card w-full max-w-3xl bg-base-100 shadow-xl p-8 rounded-box"
+        >
+          <!-- Botón para regresar -->
+          <div class="mb-4">
+            <button
+              class="btn btn-sm btn-ghost gap-2 text-gray-600 hover:text-black"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                class="w-4 h-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15.75 19.5L8.25 12l7.5-7.5"
+                />
+              </svg>
+              Regresar
+            </button>
+          </div>
+
+          <!-- Formulario -->
+          <form class="space-y-5">
+            <!-- ID de empleado -->
+            <div>
+              <label class="label font-semibold">ID de empleado</label>
+              <div class="join w-full">
+                <input
+                  type="text"
+                  placeholder="Buscar ID..."
+                  class="input input-bordered join-item w-full"
+                />
+                <button type="button" class="btn join-item bg-base-200">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                    stroke="currentColor"
+                    class="w-4 h-4"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M21 21l-4.35-4.35M17 11a6 6 0 1 0-12 0 6 6 0 0 0 12 0Z"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Foto del empleado -->
+            <div class="flex items-center gap-4">
+              <div class="avatar">
+                <div class="w-24 rounded-full ring ring-base-300 ring-offset-base-100 ring-offset-2">
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/512/847/847969.png"
+                    alt="Foto del empleado"
+                  />
+                </div>
+              </div>
+              <p class="text-sm text-gray-500">
+                Foto del empleado
+              </p>
+            </div>
+
+            <!-- Datos del empleado -->
+            <div>
+              <label class="label font-semibold">Datos del empleado</label>
+              <textarea
+                class="textarea textarea-bordered w-full"
+                placeholder="Nombre completo&#10;Área&#10;Antecedentes"
+                rows="3"
+              ></textarea>
+            </div>
+
+            <!-- Tipo de incidencia -->
+            <div>
+              <label class="label font-semibold">Tipo de incidencia</label>
+              <select class="select select-bordered w-full">
+                <option disabled selected>Seleccione un tipo</option>
+                <option>Retardo</option>
+                <option>Falta justificada</option>
+                <option>Falta injustificada</option>
+                <option>Accidente laboral</option>
+                <option>Despido</option>
+              </select>
+            </div>
+
+            <!-- Fecha y hora -->
+            <div>
+              <label class="label font-semibold">Fecha y hora</label>
+              <input
+                type="datetime-local"
+                class="input input-bordered w-full"
+                value="2025-04-01T09:41"
+              />
+            </div>
+
+            <!-- Descripción de incidencia -->
+            <div>
+              <label class="label font-semibold">Descripción breve</label>
+              <textarea
+                class="textarea textarea-bordered w-full"
+                placeholder="Describa brevemente la incidencia"
+                rows="3"
+              ></textarea>
+            </div>
+
+            <!-- Adjuntar evidencia -->
+            <div>
+              <label class="label font-semibold"
+                >Adjuntar evidencia (opcional)</label
+              >
+              <input
+                type="file"
+                class="file-input file-input-bordered w-full"
+                accept="image/*,application/pdf"
+              />
+            </div>
+
+            <!-- Botones -->
+            <div class="flex justify-end gap-4 pt-4">
+              <button type="button" class="btn btn-ghost">Cancelar</button>
+              <label for="modalConfirmacion" class="btn bg-neutral text-white">
+                Procesar
+              </label>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal DaisyUI -->
+    <input type="checkbox" id="modalConfirmacion" class="modal-toggle" />
+    <div class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">Incidencia agregada correctamente</h3>
+            <p class="py-2">La incidencia se ha creado con éxito.</p>
+            <div class="modal-action">
+                <label for="modalConfirmacion" class="btn btn-neutral">Finalizar</label>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function mostrarModal() {
+            document.getElementById('modalConfirmacion').checked = true;
+        }
+    </script>
+  </body>
+</html>
