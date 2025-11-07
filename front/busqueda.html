@@ -112,7 +112,7 @@
 
         <!-- Filtros y tabla -->
         <div class="card bg-base-100 shadow-xl">
-          <div class="card-body">
+          <div class="card-body overflow-auto">
             <!-- Pestañas de filtro -->
             <div class="tabs tabs-boxed bg-base-200 w-fit mb-4" id="filtro-estado">
               <a class="tab tab-active" onclick="filtrarPorEstado('todos')">All</a> 
@@ -502,7 +502,7 @@
               <div class="flex space-x-2">
                 <button class="btn btn-sm btn-circle btn-success" onclick="marcarCompletado(${incidencia.id_incidencia})">
                   ✓
-                </button>
+                 </button>
                 <button class="btn btn-sm btn-circle btn-warning" onclick="ponerEnEspera(${incidencia.id_incidencia})">
                   💤
                 </button>
@@ -510,7 +510,7 @@
                   <div tabindex="0" role="button" class="btn btn-sm btn-circle">
                     ...
                   </div>
-                  <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                  <ul tabindex="0" class="dropdown-content absolute z-[9999] menu p-2 shadow bg-base-100 rounded-box w-52">
                     <li><a onclick="verDetalles(${incidencia.id_incidencia})">Ver detalles</a></li>
                     <li><a onclick="editarIncidencia(${incidencia.id_incidencia})">Editar</a></li>
                     <li><a onclick="mostrarModalEliminar(${incidencia.id_incidencia})">Eliminar</a></li>
