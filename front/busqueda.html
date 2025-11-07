@@ -734,38 +734,50 @@
         }
       }
 
-      // Funciones para mostrar modales de reporte
-      function mostrarModalReporteDespidos() {
-        // Por ahora usamos datos simulados para despidos
-        // En una implementación real, esto cargaría datos de la API
-        const tablaDespidos = document.getElementById('tabla-reporte-despidos').getElementsByTagName('tbody')[0];
-        tablaDespidos.innerHTML = '';
-        
-        // Datos simulados - en producción esto vendría de la API
-        const despidosSimulados = [
-          { nombre: 'Clint Hoppe', fecha: '16 Dec 2024', causa: 'Bajo rendimiento', estado: 'En proceso' },
-          { nombre: 'Darin Deckow', fecha: '16 Dec 2024', causa: 'Faltas repetidas', estado: 'Completado' }
-        ];
-        
-        despidosSimulados.forEach(despido => {
-          const fila = tablaDespidos.insertRow();
-          fila.innerHTML = `
-            <td>${despido.nombre}</td>
-            <td>${despido.fecha}</td>
-            <td>${despido.causa}</td>
-            <td>${despido.estado}</td>
-          `;
-        });
-        
-        // Actualizar resumen
-        document.getElementById('resumen-total-despidos').textContent = despidosSimulados.length;
-        document.getElementById('resumen-despidos-proceso').textContent = 
-          despidosSimulados.filter(d => d.estado === 'En proceso').length;
-        document.getElementById('resumen-despidos-completados').textContent = 
-          despidosSimulados.filter(d => d.estado === 'Completado').length;
-        
-        document.getElementById('modal-reporte-despidos').checked = true;
-      }
+// Función para mostrar modal del reporte de despidos (solo los que tengan tipo "Despido")
+function mostrarModalReporteDespidos() {
+  // Obtener todas las incidencias que sean de tipo "Despido"
+  const despidosFiltrados = incidencias.filter(i => i.tipo_incidencia === 'Despido');
+
+  // Referencia al cuerpo de la tabla del modal
+  const tablaDespidos = document
+    .getElementById('tabla-reporte-despidos')
+    .getElementsByTagName('tbody')[0];
+  
+  // Limpiar contenido previo
+  tablaDespidos.innerHTML = '';
+
+  // Si no hay despidos registrados, mostrar mensaje
+  if (despidosFiltrados.length === 0) {
+    const filaVacia = tablaDespidos.insertRow();
+    filaVacia.innerHTML = `
+      <td colspan="4" class="text-center py-4 text-gray-500">
+        No hay incidencias registradas con tipo "Despido".
+      </td>
+    `;
+  } else {
+    // Llenar la tabla con los despidos reales
+    despidosFiltrados.forEach(despido => {
+      const fila = tablaDespidos.insertRow();
+      fila.innerHTML = `
+        <td>${obtenerNombreEmpleado(despido.id_empleado)}</td>
+        <td>${formatearFecha(despido.fecha_incidencia)}</td>
+        <td>${despido.descripcion_incidencia || 'Sin causa registrada'}</td>
+        <td>${despido.estado ? 'Completado' : 'En proceso'}</td>
+      `;
+    });
+  }
+
+  // Actualizar los contadores del resumen
+  document.getElementById('resumen-total-despidos').textContent = despidosFiltrados.length;
+  document.getElementById('resumen-despidos-proceso').textContent =
+    despidosFiltrados.filter(d => !d.estado).length;
+  document.getElementById('resumen-despidos-completados').textContent =
+    despidosFiltrados.filter(d => d.estado).length;
+
+  // Abrir el modal
+  document.getElementById('modal-reporte-despidos').checked = true;
+}
 
       function mostrarModalReporteGeneral() {
         // Actualizar datos del modal general
@@ -806,4 +818,5 @@
       }
     </script>
   </body>
+</html>ody>
 </html>
