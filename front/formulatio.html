@@ -35,18 +35,18 @@
       >
         <h2 class="text-xl font-semibold mb-6">Menú</h2>
         <div class="flex flex-col space-y-3 flex-grow">
-          <a href="dashboard.html"
+          <a
+            href="dashboard.html"
             class="btn bg-orange-400 hover:bg-yellow-500 text-black font-semibold w-full"
+            >Inicio</a
           >
-            Inicio
-        </a>
 
-          <button
-            class="btn btn-neutral w-full"
+          <button class="btn btn-neutral w-full">Crear Incidencia</button>
+          <a
+            href="busqueda.html"
+            class="btn bg-orange-400 hover:bg-yellow-500 text-black font-semibold w-full"
+            >Buscar Incidencia</a
           >
-            Crear Incidencia
-          </button>
-          <a href="busqueda.html" class="btn bg-orange-400 hover:bg-yellow-500 text-black font-semibold w-full">Buscar Incidencia</a>
         </div>
         <div
           class="mt-auto text-sm text-center text-gray-500 pt-4 border-t border-gray-300"
@@ -59,13 +59,12 @@
       <section
         class="flex-1 overflow-auto p-8 flex flex-col items-start justify-start"
       >
-        <div
-          class="card w-full bg-base-100 shadow-xl p-8 rounded-box"
-        >
+        <div class="card w-full bg-base-100 shadow-xl p-8 rounded-box">
           <!-- Botón para regresar -->
           <div class="mb-4">
             <button
               class="btn btn-sm btn-ghost gap-2 text-gray-600 hover:text-black"
+              onclick="window.history.back()"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -92,11 +91,16 @@
               <label class="label font-semibold">ID de empleado</label>
               <div class="join w-full">
                 <input
+                  id="idEmpleadoInput"
                   type="text"
                   placeholder="Buscar ID..."
                   class="input input-bordered join-item w-full"
                 />
-                <button type="button" class="btn join-item bg-base-200">
+                <button
+                  id="btnBuscarEmpleado"
+                  type="button"
+                  class="btn join-item bg-base-200"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -118,14 +122,17 @@
             <!-- Foto del empleado -->
             <div class="flex items-center gap-4">
               <div class="avatar">
-                <div class="w-24 rounded-full ring ring-base-300 ring-offset-base-100 ring-offset-2">
+                <div
+                  class="w-24 rounded-full ring ring-base-300 ring-offset-base-100 ring-offset-2"
+                >
                   <img
+                    id="fotoEmpleado"
                     src="https://cdn-icons-png.flaticon.com/512/847/847969.png"
                     alt="Foto del empleado"
                   />
                 </div>
               </div>
-              <p class="text-sm text-gray-500">
+              <p id="textoFotoEmpleado" class="text-sm text-gray-500">
                 Foto del empleado
               </p>
             </div>
@@ -134,6 +141,7 @@
             <div>
               <label class="label font-semibold">Datos del empleado</label>
               <textarea
+                id="datosEmpleado"
                 class="textarea textarea-bordered w-full"
                 placeholder="Nombre completo&#10;Área&#10;Antecedentes"
                 rows="3"
@@ -143,7 +151,7 @@
             <!-- Tipo de incidencia -->
             <div>
               <label class="label font-semibold">Tipo de incidencia</label>
-              <select class="select select-bordered w-full">
+              <select class="select select-bordered w-full" id="tipoIncidencia">
                 <option disabled selected>Seleccione un tipo</option>
                 <option>Retardo</option>
                 <option>Falta justificada</option>
@@ -157,6 +165,7 @@
             <div>
               <label class="label font-semibold">Fecha y hora</label>
               <input
+                id="fechaHora"
                 type="datetime-local"
                 class="input input-bordered w-full"
                 value="2025-04-01T09:41"
@@ -167,6 +176,7 @@
             <div>
               <label class="label font-semibold">Descripción breve</label>
               <textarea
+                id="descripcion"
                 class="textarea textarea-bordered w-full"
                 placeholder="Describa brevemente la incidencia"
                 rows="3"
@@ -179,6 +189,7 @@
                 >Adjuntar evidencia (opcional)</label
               >
               <input
+                id="evidencia"
                 type="file"
                 class="file-input file-input-bordered w-full"
                 accept="image/*,application/pdf"
@@ -187,8 +198,16 @@
 
             <!-- Botones -->
             <div class="flex justify-end gap-4 pt-4">
-              <button type="button" id="btnCancelar" class="btn btn-ghost">Cancelar</button>
-              <button id="btnProcesar" type="button" class="btn bg-neutral text-white">Procesar</button>
+              <button type="button" id="btnCancelar" class="btn btn-ghost">
+                Cancelar
+              </button>
+              <button
+                id="btnProcesar"
+                type="button"
+                class="btn bg-neutral text-white"
+              >
+                Procesar
+              </button>
             </div>
           </form>
         </div>
@@ -198,13 +217,13 @@
     <!-- Modal -->
     <input type="checkbox" id="modalConfirmacion" class="modal-toggle" />
     <div class="modal">
-        <div class="modal-box">
-            <h3 class="font-bold text-lg">Incidencia agregada correctamente</h3>
-            <p class="py-2">La incidencia se ha creado con éxito.</p>
-            <div class="modal-action">
-                <label for="modalConfirmacion" class="btn btn-neutral">Finalizar</label>
-            </div>
+      <div class="modal-box">
+        <h3 class="font-bold text-lg">Incidencia agregada correctamente</h3>
+        <p class="py-2">La incidencia se ha creado con éxito.</p>
+        <div class="modal-action">
+          <label for="modalConfirmacion" class="btn btn-neutral">Finalizar</label>
         </div>
+      </div>
     </div>
 
     <!-- Modal: Confirmar Cancelar -->
@@ -220,58 +239,93 @@
       </div>
     </div>
 
+    <!-- =================== SCRIPT PRINCIPAL =================== -->
     <script>
-        function mostrarModal() {
-            document.getElementById('modalConfirmacion').checked = true;
-        }
-        document.addEventListener('DOMContentLoaded', function() {
-          const form = document.querySelector('form');
-          const procesarBtn = document.getElementById('btnProcesar');
-          procesarBtn.addEventListener('click', function(event) {
-            const idEmpleado = form.querySelector('input[type="text"]').value.trim();
-            const datosEmpleado = form.querySelector('textarea').value.trim();
-            const tipoIncidencia = form.querySelector('select').value;
-            const fechaHora = form.querySelector('input[type="datetime-local"]').value.trim();
-            const descripcion = form.querySelectorAll('textarea')[1].value.trim();
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.querySelector("form");
+        const procesarBtn = document.getElementById("btnProcesar");
+        const btnCancelar = document.getElementById("btnCancelar");
+        const modalCancelar = document.getElementById("modalCancelar");
+        const confirmarCancelar = document.getElementById("confirmarCancelar");
 
-            if (!idEmpleado) {
-              alert('Por favor, ingrese el ID de empleado.');
+        // Buscar empleado
+        const buscarBtn = document.getElementById("btnBuscarEmpleado");
+        const inputId = document.getElementById("idEmpleadoInput");
+        const datosEmpleado = document.getElementById("datosEmpleado");
+        const fotoEmpleado = document.getElementById("fotoEmpleado");
+
+        buscarBtn.addEventListener("click", async () => {
+          const id = inputId.value.trim();
+
+          if (!id) {
+            alert("Por favor, ingrese un ID de empleado.");
+            return;
+          }
+
+          try {
+            const response = await fetch(`http://127.0.0.1:5000/empleados/${id}`);
+
+            if (!response.ok) {
+              const error = await response.json();
+              alert(error.error || "Empleado no encontrado.");
+              datosEmpleado.value = "";
+              fotoEmpleado.src =
+                "https://cdn-icons-png.flaticon.com/512/847/847969.png";
               return;
             }
-            if (tipoIncidencia === 'Seleccione un tipo') {
-              alert('Por favor, seleccione un tipo de incidencia.');
-              return;
-            }
-            if (!fechaHora) {
-              alert('Por favor, seleccione fecha y hora.');
-              return;
-            }
-            if (!descripcion) {
-              alert('Por favor, ingrese una descripción de la incidencia.');
-              return;
-            }
 
-            document.getElementById('modalConfirmacion').checked = true;
+            const data = await response.json();
 
-            form.reset();
-          });
-          const btnCancelar = document.getElementById('btnCancelar');
-          const modalCancelar = document.getElementById('modalCancelar');
-          const confirmarCancelar = document.getElementById('confirmarCancelar');
+            datosEmpleado.value = `${data.nombre_completo}\nÁrea: ${data.area}\nSin antecedentes registrados`;
 
-          btnCancelar.addEventListener('click', () => {
-            // Abrir modal de cancelar
-            modalCancelar.checked = true;
-          });
+            // Si tu backend devuelve foto_url:
+            // fotoEmpleado.src = data.foto_url || "https://cdn-icons-png.flaticon.com/512/847/847969.png";
 
-          confirmarCancelar.addEventListener('click', () => {
-            // Limpiar campos
-            form.reset();
-
-            // Cerrar modal
-            modalCancelar.checked = false;
-          });
+          } catch (error) {
+            console.error("Error al obtener datos:", error);
+            alert("Ocurrió un error al obtener los datos del empleado.");
+          }
         });
+
+        // Procesar incidencia
+        procesarBtn.addEventListener("click", function () {
+          const idEmpleado = inputId.value.trim();
+          const tipoIncidencia = document.getElementById("tipoIncidencia").value;
+          const fechaHora = document.getElementById("fechaHora").value.trim();
+          const descripcion = document.getElementById("descripcion").value.trim();
+
+          if (!idEmpleado) {
+            alert("Por favor, ingrese el ID de empleado.");
+            return;
+          }
+          if (tipoIncidencia === "Seleccione un tipo") {
+            alert("Por favor, seleccione un tipo de incidencia.");
+            return;
+          }
+          if (!fechaHora) {
+            alert("Por favor, seleccione fecha y hora.");
+            return;
+          }
+          if (!descripcion) {
+            alert("Por favor, ingrese una descripción de la incidencia.");
+            return;
+          }
+
+          // Mostrar modal de confirmación
+          document.getElementById("modalConfirmacion").checked = true;
+          form.reset();
+        });
+
+        // Cancelar registro
+        btnCancelar.addEventListener("click", () => {
+          modalCancelar.checked = true;
+        });
+
+        confirmarCancelar.addEventListener("click", () => {
+          form.reset();
+          modalCancelar.checked = false;
+        });
+      });
     </script>
   </body>
 </html>
