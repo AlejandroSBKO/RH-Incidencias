@@ -20,6 +20,45 @@ def obtener_incidencias():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# ---------------------------------------------------------
+# 5️⃣  OBTENER EL TOTAL DE INCIDENCIAS
+# ---------------------------------------------------------
+@app.route("/incidencias/total", methods=["GET"])
+def obtener_total_incidencias():
+    try:
+        response = supabase.table("incidencia").select("*", count="exact").execute()
+        total = response.count
+        return jsonify({"total": total}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# ---------------------------------------------------------
+# 6️⃣  OBTENER CONTEO POR TIPO DE INCIDENCIA
+# ---------------------------------------------------------
+@app.route("/incidencias/por-tipo", methods=["GET"])
+def obtener_incidencias_por_tipo():
+    try:
+        # Primero obtenemos todos los registros para procesarlos
+        response = supabase.table("incidencia").select("tipo_incidencia").execute()
+        
+        # Creamos un diccionario para contar las ocurrencias
+        conteo = {}
+        for incidencia in response.data:
+            tipo = incidencia['tipo_incidencia']
+            if tipo in conteo:
+                conteo[tipo] += 1
+            else:
+                conteo[tipo] = 1
+        
+        # Convertimos el diccionario a una lista de objetos
+        resultado = [{"tipo_incidencia": tipo, "count": cantidad} 
+                    for tipo, cantidad in conteo.items()]
+        
+        return jsonify(resultado), 200
+    except Exception as e:
+        print(f"Error: {str(e)}")  # Para debugging
+        return jsonify({"error": str(e)}), 500
+
 
 # ---------------------------------------------------------
 # 2️⃣  CREAR UNA NUEVA INCIDENCIA

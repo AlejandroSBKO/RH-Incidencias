@@ -71,30 +71,69 @@
         <div class="card bg-base-100 shadow-md col-span-1 flex flex-col">
           <div class="card-body flex flex-col flex-1">
             <h2 class="card-title">Incidencias Comunes</h2>
-            <div class="flex flex-col gap-3 mt-2 flex-1">
-              <div class="badge badge-neutral justify-between p-4">
-                Enfermedad Justificada <span class="ml-2 badge badge-outline">4</span>
-              </div>
-              <div class="badge badge-neutral justify-between p-4">
-                Retardo <span class="ml-2 badge badge-outline">3</span>
-              </div>
-              <div class="badge badge-neutral justify-between p-4">
-                Accidente Laboral <span class="ml-2 badge badge-outline">1</span>
-              </div>
-              <div class="badge badge-neutral justify-between p-4">
-                Despido <span class="ml-2 badge badge-outline">1</span>
-              </div>
+            <div id="tipos-incidencias" class="flex flex-col gap-3 mt-2 flex-1">
+              <!-- Los tipos de incidencias se cargarán dinámicamente aquí -->
             </div>
           </div>
+
+          <script>
+            // Función para obtener y mostrar los tipos de incidencias
+            async function cargarTiposIncidencias() {
+              try {
+                const response = await fetch('http://localhost:5000/incidencias/por-tipo');
+                const data = await response.json();
+                
+                const container = document.getElementById('tipos-incidencias');
+                container.innerHTML = ''; // Limpiar el contenedor
+
+                // Ordenar por cantidad descendente
+                data.sort((a, b) => b.count - a.count);
+
+                // Crear un badge para cada tipo de incidencia
+                data.forEach(tipo => {
+                  const badge = document.createElement('div');
+                  badge.className = 'badge badge-neutral justify-between p-4';
+                  badge.innerHTML = `
+                    ${tipo.tipo_incidencia} <span class="ml-2 badge badge-outline">${tipo.count}</span>
+                  `;
+                  container.appendChild(badge);
+                });
+              } catch (error) {
+                console.error('Error al cargar los tipos de incidencias:', error);
+                document.getElementById('tipos-incidencias').innerHTML = 
+                  '<div class="text-error">Error al cargar los datos</div>';
+              }
+            }
+
+            // Cargar los tipos de incidencias al iniciar la página
+            cargarTiposIncidencias();
+          </script>
         </div>
 
         <!-- totales -->
         <div class="card bg-base-100 shadow-md flex flex-col items-center justify-center">
           <div class="text-center">
-            <h2 class="text-lg font-bold">Incidencias este mes</h2>
-            <div class="text-6xl font-extrabold mt-2 text-gray-600">9</div>
+            <h2 class="text-lg font-bold">Total de Incidencias</h2>
+            <div id="total-incidencias" class="text-6xl font-extrabold mt-2 text-gray-600">-</div>
           </div>
         </div>
+        
+        <script>
+          // Función para obtener el total de incidencias
+          async function cargarTotalIncidencias() {
+            try {
+              const response = await fetch('http://localhost:5000/incidencias/total');
+              const data = await response.json();
+              document.getElementById('total-incidencias').textContent = data.total;
+            } catch (error) {
+              console.error('Error al cargar el total de incidencias:', error);
+              document.getElementById('total-incidencias').textContent = 'Error';
+            }
+          }
+
+          // Cargar el total al iniciar la página
+          cargarTotalIncidencias();
+        </script>
 
         <!-- aqui las graficas -->
         <div class="card bg-base-100 shadow-md col-span-2 flex flex-col">
@@ -116,7 +155,7 @@ const chartConfig = {
   series: [
     {
       name: "Sales",
-      data: [1, 0, 3, 3,2,0],
+      data: [],
     },
   ],
   chart: {
@@ -217,32 +256,54 @@ chart.render();
  
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
-const chart2Config = {
-  series: [44, 55, 13, 43, 22],
+const API_URL_TIPO = "http://127.0.0.1:5000/incidencias/por-tipo";
+
+// Inicializamos el gráfico vacío
+const chart2 = new ApexCharts(document.querySelector("#pie-chart"), {
+  series: [],
   chart: {
     type: "pie",
     width: 280,
     height: 250,
-    toolbar: {
-      show: false,
-    },
+    toolbar: { show: false },
   },
-  title: {
-    show: "",
-  },
-  dataLabels: {
-    enabled: false,
-  },
+  title: { show: "" },
+  dataLabels: { enabled: false },
   colors: ["#020617", "#ff8f00", "#00897b", "#1e88e5", "#d81b60"],
   legend: {
-    show: false,
+    show: true,
+    position: "bottom",
+    labels: { colors: "#333" },
   },
-};
- 
-const chart2 = new ApexCharts(document.querySelector("#pie-chart"), chart2Config);
- 
+});
+
 chart2.render();
+
+// Función para obtener los datos del backend y actualizar el gráfico
+async function actualizarGraficoPorTipo() {
+  try {
+    const res = await fetch(API_URL_TIPO);
+    const data = await res.json();
+
+    // Extraemos tipos y cantidades
+    const tipos = data.map(item => item.tipo_incidencia);
+    const cantidades = data.map(item => item.count);
+
+    // Actualizamos el gráfico
+    chart2.updateOptions({
+      labels: tipos,
+      series: cantidades
+    });
+
+  } catch (error) {
+    console.error("Error al cargar incidencias por tipo:", error);
+  }
+}
+
+// Ejecutar al cargar la página
+actualizarGraficoPorTipo();
 </script>
+
             </div>
           </div>
         </div>
