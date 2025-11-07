@@ -119,6 +119,56 @@ def eliminar_incidencia(id_incidencia):
         return jsonify({"error": str(e)}), 500
 
 
+# ---------------------------------------------------------
+# 5️⃣  OBTENER DATOS DEL EMPLEADO POR ID
+# ---------------------------------------------------------
+@app.route("/empleados/<int:id_empleado>", methods=["GET"])
+def obtener_datos_empleado(id_empleado):
+    try:
+        # 🔸 Cambiamos los nombres a minúsculas
+        empleado = supabase.table("empleados_c") \
+            .select("id_empleado, p_nombre, s_nombre, apellido_p, apellido_m, id_puesto_actual") \
+            .eq("id_empleado", id_empleado) \
+            .single() \
+            .execute()
+
+        if not empleado.data:
+            return jsonify({"error": f"Empleado con ID {id_empleado} no encontrado."}), 404
+
+        empleado_data = empleado.data
+
+        # 🔹 Obtener el área
+        area_nombre = "No asignada"
+        if empleado_data.get("id_puesto_actual"):
+            puesto = supabase.table("puestosa") \
+                .select("id_area") \
+                .eq("id_puesto", empleado_data["id_puesto_actual"]) \
+                .single() \
+                .execute()
+
+            if puesto.data:
+                id_area = puesto.data["id_area"]
+                area = supabase.table("areasa") \
+                    .select("nombre_area") \
+                    .eq("id_area", id_area) \
+                    .single() \
+                    .execute()
+
+                if area.data:
+                    area_nombre = area.data["nombre_area"]
+
+        # 🔹 Nombre completo
+        nombre_completo = f"{empleado_data['p_nombre']} {empleado_data.get('s_nombre', '')} {empleado_data.get('apellido_p', '')} {empleado_data.get('apellido_m', '')}".replace("  ", " ").strip()
+
+        return jsonify({
+            "nombre_completo": nombre_completo,
+            "area": area_nombre
+        }), 200
+
+    except Exception as e:
+        print("Error al obtener empleado:", e)
+        return jsonify({"error": str(e)}), 500
+
 
 if __name__ == "__main__":
     app.run(debug=True)
