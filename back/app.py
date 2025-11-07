@@ -58,7 +58,7 @@ def obtener_incidencias_por_tipo():
     except Exception as e:
         print(f"Error: {str(e)}")  # Para debugging
         return jsonify({"error": str(e)}), 500
-
+    
 
 # ---------------------------------------------------------
 # 2️⃣  CREAR UNA NUEVA INCIDENCIA
