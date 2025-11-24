@@ -22,7 +22,7 @@ def obtener_incidencias():
 
 # ---------------------------------------------------------
 # 5️⃣  OBTENER EL TOTAL DE INCIDENCIAS
-# ---------------------------------------------------------
+# --------------------------------------------------------- 
 @app.route("/incidencias/total", methods=["GET"])
 def obtener_total_incidencias():
     try:
